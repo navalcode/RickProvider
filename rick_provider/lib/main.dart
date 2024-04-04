@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:rick_provider/config/router/app_router.dart';
+import 'package:rick_provider/config/theme/app_theme.dart';
+import 'package:rick_provider/presentation/providers/characters/characters_provider.dart';
 
 void main() {
   runApp(const MainApp());
@@ -7,12 +11,21 @@ void main() {
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
-//TODO: add MaterialApp.router whit theme and dark theme to material app,
-// add routerConfig
-//when provider is ready remember to wrap the app with multiprovider and providers list
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: Placeholder(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => CharacterProvider(),
+        ),
+      ],
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme().getLightTheme(),
+        darkTheme: AppTheme().getDarkTheme(),
+        themeMode: ThemeMode.system,
+        routerConfig: appRouter,
+      ),
     );
   }
 }

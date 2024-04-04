@@ -1,4 +1,5 @@
+import 'package:rick_provider/domain/entities/character.dart';
 
 abstract class CharactersRepository {
-  //TODO: Provide contract for datasource returning a future list of characters
+  Future<List<Character>> getAllCharacters();
 }

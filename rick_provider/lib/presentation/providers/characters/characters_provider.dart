@@ -1,5 +1,19 @@
+import 'package:flutter/material.dart';
+import 'package:rick_provider/domain/entities/character.dart';
+import 'package:rick_provider/infraestructure/datasources/characters_datasource_impl.dart';
+import 'package:rick_provider/infraestructure/datasources/characters_datasource_json_impl.dart';
+import 'package:rick_provider/infraestructure/repositories/character_repositorie_impl.dart';
 
-//TODO: Create CharacterProvider class extending from ChangeNotifier, 
-//this class should have a repository instance from an implementation and a list of characters as a property, 
-//an async method to get all characters.
-//Also we should be able to change between two repository implementing different datasources.
+class CharacterProvider extends ChangeNotifier {
+  //JsonDataSource
+  final repository = CharacterRepositoryImpl(CharactersDatasourceJsonImpl());
+  //ApiDataSource
+  //final repository = CharacterRepositoryImpl(CharactersDatasourceImpl());
+
+  List<Character> characters = [] ;
+
+  Future<void> getAllCharacters () async {
+    characters = await repository.getAllCharacters();
+    notifyListeners();
+  }
+}

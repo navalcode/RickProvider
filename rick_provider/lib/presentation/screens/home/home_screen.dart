@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:rick_provider/domain/entities/character.dart';
+import 'package:rick_provider/presentation/providers/characters/characters_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   static const name = "home-screen";
@@ -6,14 +10,17 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final charactersProvider = context.watch<CharacterProvider>();
+    charactersProvider.getAllCharacters();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Rick Provider"),
       ),
-      body: const SafeArea(
-        //TODO: Handle provider data and show spinner instead
-        child:CharactersGrid(),
+      body: SafeArea(
+        child: charactersProvider.characters.isEmpty
+            ? const Center(child: CircularProgressIndicator())
+            : CharactersGrid(charactersProvider: charactersProvider),
       ),
     );
   }
@@ -22,10 +29,10 @@ class HomeScreen extends StatelessWidget {
 class CharactersGrid extends StatelessWidget {
   const CharactersGrid({
     super.key,
-    //required this.charactersProvider,
+    required this.charactersProvider,
   });
 
-  //final CharacterProvider charactersProvider;
+  final CharacterProvider charactersProvider;
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +44,10 @@ class CharactersGrid extends StatelessWidget {
             crossAxisSpacing: 10,
             crossAxisCount: 2,
           ),
-          itemCount: 10,
+          itemCount: charactersProvider.characters.length,
           itemBuilder: (context, index) {
-            return CharacterItem();
+            final character = charactersProvider.characters[index];
+            return CharacterItem(character: character);
           }),
     );
   }
@@ -48,13 +56,29 @@ class CharactersGrid extends StatelessWidget {
 class CharacterItem extends StatelessWidget {
   const CharacterItem({
     super.key,
-    //required this.character,
+    required this.character,
   });
 
-  //final Character character;
+  final Character character;
 
   @override
   Widget build(BuildContext context) {
-    return Placeholder();
+    return GestureDetector(
+      child: Column(
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: FadeInImage(
+                image: NetworkImage(character.image),
+                placeholder: const AssetImage("assets/loading.gif"),
+              ),
+            ),
+          ),
+          Text(character.name),
+        ],
+      ),
+      onTap: () => context.go("/character", extra: character),
+    );
   }
 }
