@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:rick_provider/domain/entities/character.dart';
 import 'package:rick_provider/presentation/providers/characters/characters_provider.dart';
 
+//Cambiar statelessWidget por statefull y posteriormente por ConsumerStatefullWidget
 class HomeScreen extends StatelessWidget {
   static const name = "home-screen";
   const HomeScreen({super.key});
