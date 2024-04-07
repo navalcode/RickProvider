@@ -22,4 +22,9 @@ class CharactersDatasourceJsonImpl extends CharactersDataSource {
     
     return characters;
   }
+  
+  @override
+  Future<List<Character>> getAllCharactersPaged(int page) {
+    throw UnimplementedError();
+  }
 }

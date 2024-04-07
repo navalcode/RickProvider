@@ -10,5 +10,9 @@ class CharacterRepositoryImpl extends CharactersRepository{
   Future<List<Character>> getAllCharacters() {
     return dataSource.getAllCharacters();
   }
+
+  Future<List<Character>> getAllCharactersPaged(int page) {
+    return dataSource.getAllCharactersPaged(page);
+  }
   
 }

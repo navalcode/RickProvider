@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:rick_provider/domain/entities/character.dart';
-import 'package:rick_provider/presentation/providers/characters/characters_provider.dart';
+import 'package:rick_provider/presentation/blocs/character_bloc/character_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   static const name = "home-screen";
@@ -10,17 +10,46 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final charactersProvider = context.watch<CharacterProvider>();
-    charactersProvider.getAllCharacters();
+    return BlocProvider(
+    create: (context) => CharacterBloc(),
+    child: const BlocHomeScreen()
+    );
+  }
+}
+
+class BlocHomeScreen extends StatelessWidget {
+
+  const BlocHomeScreen({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final characterBloc = BlocProvider.of<CharacterBloc>(context);
+    characterBloc.add(GetCharacters());
+    //characterBloc.add(const LoadNextPage(2));
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Rick Provider"),
       ),
       body: SafeArea(
-        child: charactersProvider.characters.isEmpty
-            ? const Center(child: CircularProgressIndicator())
-            : CharactersGrid(charactersProvider: charactersProvider),
+        child: BlocBuilder<CharacterBloc, CharacterState> (
+          builder: (context, state) {
+            if (state is CharacterLoadingState){
+              return const Center(child: CircularProgressIndicator(),);
+            }
+            if (state is CharactersErrorState){
+              return Center(child: Text(state.error),);
+            }
+
+            if (state is CharactersLoadedState){
+              return CharactersGrid(characters: state.characters);
+
+            }
+            return Container();
+          }
+        )
       ),
     );
   }
@@ -29,10 +58,10 @@ class HomeScreen extends StatelessWidget {
 class CharactersGrid extends StatelessWidget {
   const CharactersGrid({
     super.key,
-    required this.charactersProvider,
+    required this.characters,
   });
 
-  final CharacterProvider charactersProvider;
+  final List<Character> characters;
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +73,9 @@ class CharactersGrid extends StatelessWidget {
             crossAxisSpacing: 10,
             crossAxisCount: 2,
           ),
-          itemCount: charactersProvider.characters.length,
+          itemCount: characters.length,
           itemBuilder: (context, index) {
-            final character = charactersProvider.characters[index];
+            final character = characters[index];
             return CharacterItem(character: character);
           }),
     );

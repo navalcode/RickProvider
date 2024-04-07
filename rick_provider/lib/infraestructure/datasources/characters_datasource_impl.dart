@@ -24,4 +24,14 @@ class CharactersDatasourceImpl extends CharactersDataSource {
     return characters;
   }
   
+  @override
+  Future<List<Character>> getAllCharactersPaged(int page) async {
+    final response = await dio.get("/character?page=$page");
+    final characterResponse = CharactersResponse.fromJson(response.data);
+    final List<Character> characters = characterResponse.results.map(
+      (e) => CharacterMapper.characterToEntity(e),
+    ).toList();
+    return characters;
+  }
+  
 }

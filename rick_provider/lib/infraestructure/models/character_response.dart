@@ -30,11 +30,11 @@ class CharacterResponse {
     factory CharacterResponse.fromJson(Map<String, dynamic> json) => CharacterResponse(
         id: json["id"],
         name: json["name"],
-        status: statusValues.map[json["status"]]!,
-        species: speciesValues.map[json["species"]]!,
+        status: statusValues.map[json["status"]] ?? Status.unknown,
+        species: speciesValues.map[json["species"]] ?? Species.humanoid,
         type: json["type"],
-        gender: genderValues.map[json["gender"]]!,
-        origin: LocationResponse.fromJson(json["origin"]),
+        gender: genderValues.map[json["gender"]] ?? Gender.unknown,
+        origin: LocationResponse.fromJson(json["origin"] ),
         location: LocationResponse.fromJson(json["location"]),
         image: json["image"],
         episode: List<String>.from(json["episode"].map((x) => x)),
@@ -92,12 +92,16 @@ class LocationResponse {
 
 enum Species {
     alien,
-    human
+    human,
+    humanoid,
+    unknown
 }
 
 final speciesValues = EnumValues({
     "Alien": Species.alien,
-    "Human": Species.human
+    "Human": Species.human,
+    "Humanoid": Species.humanoid,
+    "unknown": Species.unknown
 });
 
 enum Status {
