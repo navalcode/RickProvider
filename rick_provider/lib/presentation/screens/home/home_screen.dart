@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rick_provider/domain/entities/character.dart';
-import 'package:rick_provider/presentation/blocs/character_bloc/character_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   static const name = "home-screen";
@@ -10,10 +8,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-    create: (context) => CharacterBloc(),
-    child: const BlocHomeScreen()
-    );
+    //Wrap with BlocProvider and create our CharacterBloc
+    return const BlocHomeScreen();
   }
 }
 
@@ -25,31 +21,15 @@ class BlocHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final characterBloc = BlocProvider.of<CharacterBloc>(context);
-    characterBloc.add(GetCharacters());
-    //characterBloc.add(const LoadNextPage(2));
+    // get characterBloc from blocprovider of context and call event. 
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Rick Provider"),
       ),
       body: SafeArea(
-        child: BlocBuilder<CharacterBloc, CharacterState> (
-          builder: (context, state) {
-            if (state is CharacterLoadingState){
-              return const Center(child: CircularProgressIndicator(),);
-            }
-            if (state is CharactersErrorState){
-              return Center(child: Text(state.error),);
-            }
-
-            if (state is CharactersLoadedState){
-              return CharactersGrid(characters: state.characters);
-
-            }
-            return Container();
-          }
-        )
+        //wrap with bloc builder and state management
+        child: CharactersGrid(characters: characters)
       ),
     );
   }
