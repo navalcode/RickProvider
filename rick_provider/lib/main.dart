@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart';
 import 'package:rick_provider/config/router/app_router.dart';
 import 'package:rick_provider/config/theme/app_theme.dart';
@@ -14,12 +15,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //Cange multiprovider for ProviderScope
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => CharacterProvider(),
-        ),
-      ],
+    return ProviderScope(
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         theme: AppTheme().getLightTheme(),

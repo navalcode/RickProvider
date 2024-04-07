@@ -1,27 +1,43 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:rick_provider/domain/entities/character.dart';
 import 'package:rick_provider/presentation/providers/characters/characters_provider.dart';
+import 'package:rick_provider/presentation/providers/characters_riverpod/characters_riverpod.dart';
 
-//Cambiar statelessWidget por statefull y posteriormente por ConsumerStatefullWidget
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   static const name = "home-screen";
   const HomeScreen({super.key});
 
   @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+
+@override
+  void initState() {
+    super.initState();
+    ref.read(charactersRiverpodProvider.notifier).loadCharacters();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final charactersProvider = context.watch<CharacterProvider>();
-    charactersProvider.getAllCharacters();
+    final charactersFromRiverpod = ref.watch(charactersRiverpodProvider);
+    //final charactersProvider = context.watch<CharacterProvider>();
+    //charactersProvider.getAllCharacters();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Rick Provider"),
       ),
       body: SafeArea(
-        child: charactersProvider.characters.isEmpty
+        child: charactersFromRiverpod.isEmpty
             ? const Center(child: CircularProgressIndicator())
-            : CharactersGrid(charactersProvider: charactersProvider),
+            : CharactersGrid(characters: charactersFromRiverpod),
       ),
     );
   }
@@ -30,10 +46,10 @@ class HomeScreen extends StatelessWidget {
 class CharactersGrid extends StatelessWidget {
   const CharactersGrid({
     super.key,
-    required this.charactersProvider,
+    required this.characters,
   });
 
-  final CharacterProvider charactersProvider;
+  final List<Character> characters;
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +61,9 @@ class CharactersGrid extends StatelessWidget {
             crossAxisSpacing: 10,
             crossAxisCount: 2,
           ),
-          itemCount: charactersProvider.characters.length,
+          itemCount: characters.length,
           itemBuilder: (context, index) {
-            final character = charactersProvider.characters[index];
+            final character = characters[index];
             return CharacterItem(character: character);
           }),
     );
