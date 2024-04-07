@@ -1,8 +1,4 @@
-
-//DON'T TOUCH THIS YET ;), we will be using this later
-
-
-/*import 'dart:convert';
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:rick_provider/domain/datasources/characters_datasource.dart';
 import 'package:rick_provider/domain/entities/character.dart';
@@ -27,4 +23,3 @@ class CharactersDatasourceJsonImpl extends CharactersDataSource {
     return characters;
   }
 }
-*/
